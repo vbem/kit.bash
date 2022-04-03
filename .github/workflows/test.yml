@@ -46,13 +46,13 @@ jobs:
             }
           }'
           kit::json::flatten <<< "$j" | kit::wf::group 'kit::json::flatten'
-          kit::wf::output 'a' <<< "the output value of a"
-          kit::wf::env 'B' <<< "the env value
+          kit::wf::output 'a' grouped <<< "the output value of a"
+          kit::wf::env 'B' grouped <<< "the env value
           of key B"
           
       - run: |
           ${{ steps.kit.outputs.source }}
           kit::wf::group 'outputs of previous step' <<< '${{ toJson(steps.case.outputs) }}'
           kit::wf::group 'env B' <<< "$B"
-          kit::wf::group 'steps' <<< '${{ steps }}'
+          kit::wf::group 'steps' <<< '${{ toJson(steps) }}'
 ...

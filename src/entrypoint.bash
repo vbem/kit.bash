@@ -36,7 +36,7 @@ function kit::wf::group {
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
 # https://renehernandez.io/snippets/multiline-strings-as-a-job-output-in-github-actions/
 #   $1: output name
-#   $2: flag to show grouped 
+#   $2: flag to show grouped logs
 #   stdin: output value
 #   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
@@ -53,7 +53,7 @@ function kit::wf::output {
 # Set stdin as value to environment with given name
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
 #   $1: environment variable name
-#   $2: flag to show grouped 
+#   $2: flag to show grouped logs
 #   stdin: environment variable value
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::env {
