@@ -46,8 +46,8 @@ jobs:
             }
           }'
           kit::json::flatten <<< "$j" | kit::wf::group 'kit::json::flatten'
-          kit::wf::output 'a' grouped <<< "the output value of a"
-          kit::wf::env 'B' grouped <<< "the env value
+          kit::wf::output 'a' <<< "the output value of 'a'"
+          kit::wf::env 'B' MASKED <<< "the env value
           of key B"
           
       - run: |

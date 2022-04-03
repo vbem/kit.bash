@@ -36,38 +36,32 @@ function kit::wf::group {
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
 # https://renehernandez.io/snippets/multiline-strings-as-a-job-output-in-github-actions/
 #   $1: output name
-#   $2: flag to show grouped logs
+#   $2: masked value in logs
 #   stdin: output value
 #   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::output {
     local val
     val="$(< /dev/stdin)"
-    kit::log::stderr INFO "🖨️ Setting step output '$1'"
     echo "::set-output name=$1::$val"
-    if [[ -n "$2" ]]; then
-        kit::wf::group "🖨️ step output '$1'" <<< "$val"
-    fi
+    kit::wf::group "🖨️ step output '$1' has been set" <<< "${2:-$val}"
 }
 
 # Set stdin as value to environment with given name
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
 #   $1: environment variable name
-#   $2: flag to show grouped logs
+#   $2: masked value in logs
 #   stdin: environment variable value
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::env {
     local val
     val="$(< /dev/stdin)"
-    kit::log::stderr INFO "💲 Setting environment variable '$1' into \$GITHUB_ENV"
     { # https://www.gnu.org/software/bash/manual/bash.html#Command-Grouping
         echo "$1<<__GITHUB_ENV__"
         echo "$val"
         echo '__GITHUB_ENV__'
     } >> "$GITHUB_ENV"
-    if [[ -n "$2" ]]; then
-        kit::wf::group "💲 environment variable '$1' in \$GITHUB_ENV" <<< "$val"
-    fi
+    kit::wf::group "🖨️ environment variable '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
 }
 
 # Flatten JSON to key-value lines
