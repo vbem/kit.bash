@@ -10,7 +10,8 @@ _KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -r _KIT_BASH # sourced sent
 #   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::group {
-    echo "::group::\e[1;92m$1\e[0m" >&2
+    local title="\e[1;92m$1\e[0m"
+    echo "::group::$title" >&2
     echo "$(< /dev/stdin)"          >&2
     echo '::endgroup::'             >&2
 }
