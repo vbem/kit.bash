@@ -15,7 +15,7 @@ outputs:
     description: 'Path to "kit.bash" entrypoint'
     value: ${{ steps.main.outputs.entrypoint }}
   source:
-    description: 'Command to source 'kit.bash' entrypoint in current shell'
+    description: 'Command to source "kit.bash" entrypoint in current shell'
     value: source ${{ steps.main.outputs.entrypoint }}
 
 # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-composite-actions
