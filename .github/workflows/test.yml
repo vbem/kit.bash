@@ -38,9 +38,11 @@ jobs:
           {
             "a" : 1,
             "b" : {
-              "c" : 'haha',
-              "d" : [100, 200, true, false, null]
-            },
+              "c" : "haha",
+              "d" : [100, true, false, null, " ", ""],
+              "e" : [],
+              "f" : {}
+            }
           }
           __HEREDOC__
           kit::wf::group '/etc/os-release' < /etc/os-release
