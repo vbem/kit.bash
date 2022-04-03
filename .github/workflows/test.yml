@@ -28,6 +28,7 @@ jobs:
         uses: ./
         
       - name: Read and execute `kit.bash` entrypoint in current shell
+        id: case
         run: |
           ${{ steps.kit.outputs.source }}
           kit::log::stderr DEBUG 'This is a DEBUG message'
@@ -46,5 +47,11 @@ jobs:
           }
           __HEREDOC__
           kit::wf::group '/etc/os-release' < /etc/os-release
+          kit::wf::output 'a' <<< "the output value"
+          kit::wf:env 'B' <<< "the env value
+          of key B"
           
+      - run: |
+          kit::wf::group 'outputs of previous step' <<< '${{ toJson(steps.case.outputs) }}'
+          kit::log::stderr INFO "now B=$B"
 ...
