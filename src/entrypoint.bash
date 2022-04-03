@@ -61,7 +61,18 @@ function kit::wf::env {
         echo "$val"
         echo '__GITHUB_ENV__'
     } >> "$GITHUB_ENV"
-    kit::wf::group "🖨️ environment variable '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
+    kit::wf::group "💲 environment variable '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
+}
+
+# Extract host from an URL
+#   $1: URL
+#   stdout: host
+#   $?: 0 if successful and non-zero otherwise
+function kit::str::extractHost {
+    local url="$1" # for Parameter Expansion & Pattern Matching
+    url="${url/#*:\/\/}"
+    url="${url/%:*}"
+    echo -n "${url/%\/*}"
 }
 
 # Flatten JSON to key-value lines
