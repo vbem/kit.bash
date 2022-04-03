@@ -76,7 +76,8 @@ function kit::wf::env {
 #   stdout: flattened key-value lines
 #   $?: 0 if successful and non-zero otherwise
 function kit::json::flatten {
-    jq -Mcr --arg sep "${1:- 👉 }" 'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
+    jq -Mcr --arg sep "${1:- 👉 }" \
+    'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
 }
 
 # Run docker image history
@@ -92,7 +93,7 @@ function kit::docker::imageHistory {
 #   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::docker::imageInspect {
-    docker image inspect "$1" | jq -Mcre '.[]' | kit::json::flatten \
+    docker image inspect "$1" | jq -Mcre '.[]' | kit::json::flatten '' \
         | kit::wf::group "🐳 docker image inspect '$1'"
 }
 # Run docker image save
