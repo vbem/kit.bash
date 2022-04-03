@@ -35,7 +35,7 @@ jobs:
           kit::log::stderr INFO 'This is a INFO message'
           kit::log::stderr WANR 'This is a WARN message'
           kit::log::stderr ERROR 'This is a ERROR message'
-          j="{
+          j='{
             "a" : 1,
             "b" : {
               "c" : "haha",
@@ -43,7 +43,7 @@ jobs:
               "e" : [],
               "f" : {}
             }
-          }"
+          }'
           kit::json::flatten <<< "$j" | kit::wf::group 'kit::json::flatten'
           kit::wf::output 'a' <<< "the output value"
           kit::wf::env 'B' <<< "the env value
