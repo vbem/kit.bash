@@ -50,9 +50,11 @@ function kit::wf::group {
 function kit::wf::env {
     local val
     val="$(< /dev/stdin)"
-    echo "$1<<__GITHUB_ENV__"   >> "$GITHUB_ENV"
-    echo "$val"                 >> "$GITHUB_ENV"
-    echo '__GITHUB_ENV__'       >> "$GITHUB_ENV"
+    {
+        echo "$1<<__GITHUB_ENV__"
+        echo "$val"
+        echo '__GITHUB_ENV__'
+    } >> "$GITHUB_ENV"
     kit::wf::group "💲 append '$1' to \$GITHUB_ENV" <<< "$val"
 }
 

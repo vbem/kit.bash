@@ -34,7 +34,7 @@ jobs:
           kit::log::stderr INFO 'This is a INFO message'
           kit::log::stderr WANR 'This is a WARN message'
           kit::log::stderr ERROR 'This is a ERROR message'
-          kit::json::flatten | kit::wf::group 'kit::json::flatten' <<__HEREDOC__
+          kit::json::flatten <<__HEREDOC__
           {
             "a" : 1
             "b" : {
@@ -43,5 +43,6 @@ jobs:
             }
           }
           __HEREDOC__
+          kit::wf::group '/etc/os-release' < /etc/os-release
           
 ...

@@ -13,13 +13,17 @@ inputs: {}
 outputs:
   entrypoint:
     description: 'Path to entrypoint of `kit.bash`'
-    value: ${{ github.action_path }}/src/main.sh
+    value: ${{ steps.main.outputs.entrypoint }}
   source:
     description: "Read and execute `kit.bash` entrypoint in current shell"
-    value: source ${{ github.action_path }}/src/main.sh
+    value: source ${{ steps.main.outputs.entrypoint }}
 
 # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-composite-actions
 runs:
   using: composite
-  steps: []
+  steps:
+    - name: Set outputs:
+      id: main
+      shell: bash
+      run: echo "::set-output name=entrypoint::${{ github.action_path }}/src/main.sh"
 ...
