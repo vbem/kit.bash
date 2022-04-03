@@ -3,12 +3,12 @@
 [[ -v _KIT_BASH ]] && return # avoid duplicated source
 _KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -r _KIT_BASH # sourced sential
 
-# Log to stderr
+# Log to stdout
 #   $1: level string
 #   $2: message string
-#   stderr: message string
+#   stdout: message string
 #   $?: always 0
-function kit::log::stderr {
+function kit::log::stdout {
     local level
     case "$1" in
         FATAL|ERR*)     level="\e[1;91m$1\e[0m" ;;
@@ -17,7 +17,7 @@ function kit::log::stderr {
         DEBUG)          level="\e[1;96m$1\e[0m" ;;
         *)              level="\e[1;94m$1\e[0m" ;;
     esac
-    echo -e "\e[2;97m[\e[0m$level\e[2;97m]\e[0m \e[93m$2\e[0m" >&2
+    echo -e "\e[2;97m[\e[0m$level\e[2;97m]\e[0m \e[93m$2\e[0m"
 }
 
 # Flatten JSON to key-value lines
@@ -29,23 +29,23 @@ function kit::json::flatten {
     jq -Mcr --arg sep "${1:- 👉 }" 'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
 }
 
-# Group stdin to stderr with title
+# Group stdin to stdout with title
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
 #   $1: group title
 #   stdin: logs
-#   stderr: grouped logs
+#   stdout: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::group {
-    echo "::group::$1"      >&2
-    echo "$(< /dev/stdin)"  >&2
-    echo '::endgroup::'     >&2
+    echo "::group::$1"
+    echo "$(< /dev/stdin)"
+    echo '::endgroup::'
 }
 
 # Set stdin as value to environment with given name
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
 #   $1: environment variable name
 #   stdin: environment variable value
-#   stderr: grouped logs
+#   stdout: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::env {
     local val
@@ -63,12 +63,12 @@ function kit::wf::env {
 # https://renehernandez.io/snippets/multiline-strings-as-a-job-output-in-github-actions/
 #   $1: output name
 #   stdin: output value
-#   stderr: grouped logs
+#   stdout: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::output {
     local val
     val="$(< /dev/stdin)"
-    echo "::set-output name=$1::$val" >&2
+    echo "::set-output name=$1::$val"
     kit::wf::group "🖨️ set '$1' to step outputs" <<< "$val"
 }
 
@@ -79,7 +79,7 @@ function kit::wf::output {
 #   stdout: generated dockerconfigjson
 #   $?: 0 if successful and non-zero otherwise
 function kit::k8s::dockerconfigjson {
-    kit::log::stderr DEBUG "🔑 Generating dockerconfigjson for $2@$1"
+    kit::log::stdout DEBUG "🔑 Generating dockerconfigjson for $2@$1"
     kubectl create secret docker-registry 'tmp' \
       --dry-run=client -o yaml \
       --docker-server="$1" \
