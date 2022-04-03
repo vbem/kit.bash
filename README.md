@@ -18,7 +18,7 @@ This action provides general kit functions to improve user experience of bash 'r
     kit::log::stderr INFO 'This is a INFO message'
     kit::log::stderr WANR 'This is a WARN message'
     kit::log::stderr ERROR 'This is a ERROR message'
-    jq -Ce <<< '${{ steps }}' | kit::wf::group 'Context "steps"'
+    jq -Ce <<< '${{ toJson(steps) }}' | kit::wf::group 'Context "steps"'
     kit::wf::output 'some-output-name' <<< "some-output-value"
     kit::wf::env 'OS_RELEASE' < /etc/os-release
 ```
@@ -27,5 +27,5 @@ This action provides general kit functions to improve user experience of bash 'r
 
 ID | Type | Description
 --- | --- | ---
-`entrypoint` | String | Path to 'kit.bash' entrypoint | 
-`source` | String | Command to source 'kit.bash' entrypoint in current shell | 
+`entrypoint` | String | Path to 'kit.bash' entrypoint |
+`source` | String | Command to source 'kit.bash' entrypoint in current shell |

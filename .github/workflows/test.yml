@@ -55,14 +55,4 @@ jobs:
           ${{ steps.kit.outputs.source }}
           kit::wf::group 'env B' <<< "$B"
           kit::wf::group 'toJson(steps)' <<< '${{ toJson(steps) }}'
-          
-      - run: |
-          ${{ steps.kit.outputs.source }} # Load kit.bash functions into current shell
-          kit::log::stderr DEBUG 'This is a DEBUG message'
-          kit::log::stderr INFO 'This is a INFO message'
-          kit::log::stderr WANR 'This is a WARN message'
-          kit::log::stderr ERROR 'This is a ERROR message'
-          jq -Ce <<< '${{ toJson(steps) }}' | kit::wf::group 'Context "steps"'
-          kit::wf::output 'some-output-name' <<< "some-output-value"
-          kit::wf::env 'OS_RELEASE' < /etc/os-release
 ...
