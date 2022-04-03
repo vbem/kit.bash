@@ -52,7 +52,6 @@ jobs:
           
       - run: |
           ${{ steps.kit.outputs.source }}
-          kit::wf::group 'outputs of previous step' <<< '${{ toJson(steps.case.outputs) }}'
           kit::wf::group 'env B' <<< "$B"
-          kit::wf::group 'steps' <<< '${{ toJson(steps) }}'
+          kit::wf::group 'toJson(steps)' <<< '${{ toJson(steps) }}'
 ...

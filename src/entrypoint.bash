@@ -79,6 +79,38 @@ function kit::json::flatten {
     jq -Mcr --arg sep "${1:- 👉 }" 'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
 }
 
+# Run docker image history
+#   $1: image
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::docker::imageHistory {
+    docker image history "$1" | kit::wf::group "🐳 docker image history '$1'"
+}
+
+# Run docker image inspect
+#   $1: image
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::docker::imageInspect {
+    docker image inspect "$1" | jq -Mcre '.[]' | kit::json::flatten \
+        | kit::wf::group "🐳 docker image inspect '$1'"
+}
+# Run docker image save
+#   $1: image
+#   $2: compression command (default: 'gzip -v')
+#   $3: archieve file path (default: '$RUNNER_TEMP/image.tar.gz')
+#   stdout: archieve file path
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::docker::imageSave {
+    local compress="${2:-gzip -v}" archive="${3:-$RUNNER_TEMP/image.tar.gz}"
+    {
+        time docker image save "$1" | $compress > "$archive"
+        ls -ald --full-time "$archive"
+    } | kit::wf::group "🐳 docker image save '$1' | $compress > '$archive'"
+    echo -n "$archive"
+}
+
 # Get dockerconfigjson
 #   $1: CR_HOST
 #   $2: CR_USER
