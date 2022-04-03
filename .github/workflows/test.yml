@@ -36,11 +36,11 @@ jobs:
           kit::log::stderr ERROR 'This is a ERROR message'
           kit::json::flatten <<__HEREDOC__
           {
-            "a" : 1
+            "a" : 1,
             "b" : {
-              "c" : 'haha'
+              "c" : 'haha',
               "d" : [100, 200, true, false, null]
-            }
+            },
           }
           __HEREDOC__
           kit::wf::group '/etc/os-release' < /etc/os-release
