@@ -3,6 +3,49 @@
 [[ -v _KIT_BASH ]] && return # avoid duplicated source
 _KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -r _KIT_BASH # sourced sential
 
+# Group stdin to stderr with title
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
+#   $1: group title
+#   stdin: logs
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::group {
+    echo "::group::$1"      >&2
+    echo "$(< /dev/stdin)"  >&2
+    echo '::endgroup::'     >&2
+}
+
+# Set stdin as value to environment with given name
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+#   $1: environment variable name
+#   stdin: environment variable value
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::env {
+    local val
+    val="$(< /dev/stdin)"
+    {
+        echo "$1<<__GITHUB_ENV__"
+        echo "$val"
+        echo '__GITHUB_ENV__'
+    } >> "$GITHUB_ENV"
+    kit::wf::group "💲 append '$1' to \$GITHUB_ENV" <<< "$val"
+}
+
+# Set stdin as value to output of current step with given name
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+# https://renehernandez.io/snippets/multiline-strings-as-a-job-output-in-github-actions/
+#   $1: output name
+#   stdin: output value
+#   stderr: grouped logs
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::output {
+    local val
+    val="$(< /dev/stdin)"
+    echo "::set-output name=$1::$val"
+    kit::wf::group "🖨️ set '$1' to step outputs" <<< "$val"
+}
+
 # Log to stderr
 #   $1: level string
 #   $2: message string
@@ -27,49 +70,6 @@ function kit::log::stderr {
 #   $?: 0 if successful and non-zero otherwise
 function kit::json::flatten {
     jq -Mcr --arg sep "${1:- 👉 }" 'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
-}
-
-# Group stdin to stdout with title
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
-#   $1: group title
-#   stdin: logs
-#   stdout: grouped logs
-#   $?: 0 if successful and non-zero otherwise
-function kit::wf::group {
-    echo "::group::$1"
-    echo "$(< /dev/stdin)"
-    echo '::endgroup::'
-}
-
-# Set stdin as value to environment with given name
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-#   $1: environment variable name
-#   stdin: environment variable value
-#   stdout: grouped logs
-#   $?: 0 if successful and non-zero otherwise
-function kit::wf::env {
-    local val
-    val="$(< /dev/stdin)"
-    {
-        echo "$1<<__GITHUB_ENV__"
-        echo "$val"
-        echo '__GITHUB_ENV__'
-    } >> "$GITHUB_ENV"
-    kit::wf::group "💲 append '$1' to \$GITHUB_ENV" <<< "$val"
-}
-
-# Set stdin as value to output of current step with given name
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
-# https://renehernandez.io/snippets/multiline-strings-as-a-job-output-in-github-actions/
-#   $1: output name
-#   stdin: output value
-#   stdout: grouped logs
-#   $?: 0 if successful and non-zero otherwise
-function kit::wf::output {
-    local val
-    val="$(< /dev/stdin)"
-    echo "::set-output name=$1::$val"
-    kit::wf::group "🖨️ set '$1' to step outputs" <<< "$val"
 }
 
 # Get dockerconfigjson
