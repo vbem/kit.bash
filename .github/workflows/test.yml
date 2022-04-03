@@ -48,7 +48,7 @@ jobs:
           __HEREDOC__
           kit::wf::group '/etc/os-release' < /etc/os-release
           kit::wf::output 'a' <<< "the output value"
-          kit::wf:env 'B' <<< "the env value
+          kit::wf::env 'B' <<< "the env value
           of key B"
           
       - run: |
