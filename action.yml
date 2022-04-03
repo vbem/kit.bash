@@ -1,0 +1,25 @@
+---
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+name: Kit BASH
+author: '@vbem'
+description: General kit functions to improve user experience of bash `run` steps
+branding:
+  icon: terminal
+  color: green
+
+inputs: {}
+
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputs-for-composite-actions
+outputs:
+  entrypoint:
+    description: 'Path to entrypoint of `kit.bash`'
+    value: ${{ github.action_path }}/src/main.sh
+  source:
+    description: "Read and execute `kit.bash` entrypoint in current shell"
+    value: source ${{ github.action_path }}/src/main.sh
+
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-composite-actions
+runs:
+  using: composite
+  steps: []
+...

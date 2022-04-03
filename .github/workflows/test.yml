@@ -1,0 +1,47 @@
+---
+name: Testing
+
+env:
+  TZ: Asia/Shanghai
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-only-cancel-in-progress-jobs-or-runs-for-the-current-workflow
+concurrency:
+  group: ${{ github.workflow }}@${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push: # If you define neither tags(-ignore) nor branches(-ignore), the workflow will run for either branches or tags.
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3 # https://github.com/marketplace/actions/checkout
+
+      - name: Load `kit.bash` action
+        id: kit
+        uses: ./
+        
+      - name: Read and execute `kit.bash` entrypoint in current shell
+        run: |
+          ${{ steps.kit.outputs.source }}
+          kit::log::stderr DEBUG 'This is a DEBUG message'
+          kit::log::stderr INFO 'This is a INFO message'
+          kit::log::stderr WANR 'This is a WARN message'
+          kit::log::stderr ERROR 'This is a ERROR message'
+          kit::json::flatten | kit::wf::group 'kit::json::flatten' <<__HEREDOC__
+          {
+            "a" : 1
+            "b" : {
+              "c" : 'haha'
+              "d" : [100, 200, true, false, null]
+            }
+          }
+          __HEREDOC__
+          
+...
