@@ -35,8 +35,7 @@ jobs:
           kit::log::stderr INFO 'This is a INFO message'
           kit::log::stderr WANR 'This is a WARN message'
           kit::log::stderr ERROR 'This is a ERROR message'
-          kit::json::flatten <<__HEREDOC__
-          {
+          j="{
             "a" : 1,
             "b" : {
               "c" : "haha",
@@ -44,9 +43,8 @@ jobs:
               "e" : [],
               "f" : {}
             }
-          }
-          __HEREDOC__
-          kit::wf::group '/etc/os-release' < /etc/os-release
+          }"
+          kit::json::flatten <<< "$j" | kit::wf::group 'kit::json::flatten'
           kit::wf::output 'a' <<< "the output value"
           kit::wf::env 'B' <<< "the env value
           of key B"
