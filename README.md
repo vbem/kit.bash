@@ -1,22 +1,31 @@
-[![Testing](https://github.com/vbem/flatten-contexts/actions/workflows/test.yml/badge.svg)](https://github.com/vbem/flatten-contexts/actions/workflows/test.yml)
-[![Super Linter](https://github.com/vbem/flatten-contexts/actions/workflows/linter.yml/badge.svg)](https://github.com/vbem/flatten-contexts/actions/workflows/linter.yml)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/vbem/flatten-contexts?label=Release&logo=github)](https://github.com/vbem/flatten-contexts/releases)
-[![Marketplace](https://img.shields.io/badge/GitHub%20Actions-Marketplace-blue?logo=github)](https://github.com/marketplace/actions/flatten-contexts)
+[![Testing](https://github.com/vbem/kit.bash/actions/workflows/test.yml/badge.svg)](https://github.com/vbem/kit.bash/actions/workflows/test.yml)
+[![Super Linter](https://github.com/vbem/kit.bash/actions/workflows/linter.yml/badge.svg)](https://github.com/vbem/kit.bash/actions/workflows/linter.yml)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/vbem/kit.bash?label=Release&logo=github)](https://github.com/vbem/kit.bash/releases)
+[![Marketplace](https://img.shields.io/badge/GitHub%20Actions-Marketplace-blue?logo=github)](https://github.com/marketplace/actions/kit.bash)
 
-# Flatten contexts
-This action can dump **"flattened"** [*GitHub contexts*](https://docs.github.com/en/actions/learn-github-actions/contexts#example-printing-context-information-to-the-log), which is more friendly than JSON for searching and debugging. 😀
-
-![Example](https://repository-images.githubusercontent.com/477080111/8cb0e9f1-a74f-44f1-8b50-c35cc3ad13e9 "vbem/flatten-contexts")
+## About
+This action provides general kit functions to improve user experience of bash 'run' steps.
 
 ## Example usage
 
 ```yaml
-- name: Dump flattened GitHub contexts
-  uses: vbem/flatten-contexts@v1
+- uses: vbem/kit.bash@v1
+  id: kit
+
+- run: |
+    ${{ steps.kit.outputs.source }} # Load kit.bash functions into current shell
+    kit::log::stderr DEBUG 'This is a DEBUG message'
+    kit::log::stderr INFO 'This is a INFO message'
+    kit::log::stderr WANR 'This is a WARN message'
+    kit::log::stderr ERROR 'This is a ERROR message'
+    jq -Ce <<< '${{ steps }}' | kit::wf::group 'Context "steps"'
+    kit::wf::output 'some-output-name' <<< "some-output-value"
+    kit::wf::env 'OS_RELEASE' < /etc/os-release
 ```
 
-## Inputs
+## Outputs
 
-ID | Type | Default | Description
---- | --- | --- | ---
-`sep` | String | ` 👉 ` | Separator between key and value
+ID | Type | Description
+--- | --- | ---
+`entrypoint` | Path to 'kit.bash' entrypoint | 
+`source` | Command to source 'kit.bash' entrypoint in current shell | 

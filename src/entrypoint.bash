@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [[ -v _KIT_BASH ]] && return # avoid duplicated source
-_KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -r _KIT_BASH # sourced sential
+_KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -rg _KIT_BASH # sourced sential
 
 # Log to stderr
 #   $1: level string
