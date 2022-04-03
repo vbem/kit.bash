@@ -52,6 +52,7 @@ jobs:
           of key B"
           
       - run: |
+          ${{ steps.kit.outputs.source }}
           kit::wf::group 'outputs of previous step' <<< '${{ toJson(steps.case.outputs) }}'
           kit::log::stderr INFO "now B=$B"
 ...
