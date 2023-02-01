@@ -43,7 +43,11 @@ function kit::wf::group {
 function kit::wf::output {
     local val
     val="$(< /dev/stdin)"
-    echo "::set-output name=$1::$val"
+    { # https://www.gnu.org/software/bash/manual/bash.html#Command-Grouping
+        echo "$1<<__GITHUB_OUTPUT__"
+        echo "$val"
+        echo '__GITHUB_OUTPUT__'
+    } >> "$GITHUB_OUTPUT"
     kit::wf::group "🖨️ step output '$1' has been set" <<< "${2:-$val}"
 }
 
