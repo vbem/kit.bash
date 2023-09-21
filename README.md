@@ -1,9 +1,8 @@
+## About
 [![Testing](https://github.com/vbem/kit.bash/actions/workflows/test.yml/badge.svg)](https://github.com/vbem/kit.bash/actions/workflows/test.yml)
 [![Super Linter](https://github.com/vbem/kit.bash/actions/workflows/linter.yml/badge.svg)](https://github.com/vbem/kit.bash/actions/workflows/linter.yml)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/vbem/kit.bash?label=Release&logo=github)](https://github.com/vbem/kit.bash/releases)
 [![Marketplace](https://img.shields.io/badge/GitHub%20Actions-Marketplace-blue?logo=github)](https://github.com/marketplace/actions/kit-bash)
-
-## About
 This action provides general kit functions to improve user experience of bash 'run' steps.
 
 ## Example usage
