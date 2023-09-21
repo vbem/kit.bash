@@ -52,7 +52,7 @@ jobs:
           kit::wf::output 'a' <<< "the output value of 'a'"
           kit::wf::env 'B' MASKED <<< "the env value
           of key B"
-          kit::wf::mask "$some-secret-value"
+          kit::wf::mask "$STEP_ENV"
           kit::log::stderr INFO "env STEP_ENV=$STEP_ENV"
 
       - run: |
