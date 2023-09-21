@@ -45,7 +45,7 @@ function kit::wf::stop {
     if [[ -z "$1" ]]; then
         echo '::stop-commands::__KIT_WF_STOP__' >&2
     else
-        echo '__KIT_WF_STOP__' >&2
+        echo '::__KIT_WF_STOP__::' >&2
     fi
 }
 
