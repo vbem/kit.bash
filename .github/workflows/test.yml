@@ -31,6 +31,8 @@ jobs:
 
       - name: Read and execute `kit.bash` entrypoint in current shell
         id: case
+        env:
+          STEP_ENV: some-secret-value
         run: |
           ${{ steps.kit.outputs.source }}
           kit::log::stderr DEBUG 'This is a DEBUG message'
@@ -50,6 +52,8 @@ jobs:
           kit::wf::output 'a' <<< "the output value of 'a'"
           kit::wf::env 'B' MASKED <<< "the env value
           of key B"
+          kit::wf::mask "$some-secret-value"
+          kit::log::stderr INFO "env STEP_ENV=$STEP_ENV"
 
       - run: |
           ${{ steps.kit.outputs.source }}

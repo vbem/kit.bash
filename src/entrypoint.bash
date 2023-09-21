@@ -7,7 +7,6 @@ _KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -rg _KIT_BASH # sourced sen
 #   $1: level string
 #   $2: message string
 #   stderr: message string
-#   $?: always 0
 function kit::log::stderr {
     local level
     case "$1" in
@@ -30,6 +29,24 @@ function kit::wf::group {
     echo "::group::$1"      >&2
     echo "$(< /dev/stdin)"  >&2
     echo '::endgroup::'     >&2
+}
+
+# Masking a value in a log
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#masking-a-value-in-a-log
+#   $1: value
+function kit::wf::mask {
+    echo "::add-mask::$1" >&2
+}
+
+# Stopping and starting workflow commands
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#stopping-and-starting-workflow-commands
+#   $1: non-empty to resume
+function kit::wf::stop {
+    if [[ -z "$1" ]]; then
+        echo '::stop-commands::__KIT_WF_STOP__' >&2
+    else
+        echo '__KIT_WF_STOP__' >&2
+    fi
 }
 
 # Set stdin as value to output of current step with given name
@@ -56,6 +73,7 @@ function kit::wf::output {
 #   $1: environment variable name
 #   $2: masked value in logs
 #   stdin: environment variable value
+#   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::env {
     local val
@@ -65,18 +83,7 @@ function kit::wf::env {
         echo "$val"
         echo '__GITHUB_ENV__'
     } >> "$GITHUB_ENV"
-    kit::wf::group "💲 environment variable '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
-}
-
-# Extract host from an URL
-#   $1: URL
-#   stdout: host
-#   $?: 0 if successful and non-zero otherwise
-function kit::str::extractHost {
-    local url="$1" # for Parameter Expansion & Pattern Matching
-    url="${url/#*:\/\/}"
-    url="${url/%:*}"
-    echo -n "${url/%\/*}"
+    kit::wf::group "💲 env '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
 }
 
 # Flatten JSON to key-value lines
