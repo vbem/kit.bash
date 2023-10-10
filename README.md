@@ -23,7 +23,7 @@ This action provides general kit functions to improve user experience of bash 'r
     jq -Ce <<< '${{ toJson(steps) }}' | kit::wf::group 'Context "steps"'
     kit::wf::output 'some-output-name' <<< "some-output-value"
     kit::wf::env 'OS_RELEASE' < /etc/os-release
-    kit::wf::summary '### Hello world! :rocket:'
+    kit::wf::summary <<< '### Hello world! :rocket:'
 ```
 
 ## Outputs

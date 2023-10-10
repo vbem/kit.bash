@@ -91,7 +91,7 @@ function kit::wf::env {
 #   stdin: markdown-content
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::summary {
-    cat - >> "$GITHUB_STEP_SUMMARY"
+    echo "$(< /dev/stdin)" >> "$GITHUB_STEP_SUMMARY"
 }
 
 # Prepend a directory to the system PATH variable to all subsequent actions in the current job
