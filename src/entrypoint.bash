@@ -88,7 +88,7 @@ function kit::wf::env {
 
 # Append summary content for the current step
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-markdown-content
-#   stdin: environment variable value
+#   stdin: markdown-content
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::summary {
     echo "$(< /dev/stdin)" >> "$GITHUB_STEP_SUMMARY"

@@ -55,6 +55,7 @@ jobs:
           kit::wf::mask "$STEP_ENV"
           kit::log::stderr INFO "env STEP_ENV=$STEP_ENV"
           kit::wf::summary '### Hello world! :rocket:'
+          cat "$GITHUB_STEP_SUMMARY"
 
       - run: |
           ${{ steps.kit.outputs.source }}
