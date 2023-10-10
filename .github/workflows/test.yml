@@ -54,6 +54,7 @@ jobs:
           of key B"
           kit::wf::mask "$STEP_ENV"
           kit::log::stderr INFO "env STEP_ENV=$STEP_ENV"
+          kit::wf::summary '### Hello world! :rocket:'
 
       - run: |
           ${{ steps.kit.outputs.source }}

@@ -86,6 +86,22 @@ function kit::wf::env {
     kit::wf::group "💲 env '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
 }
 
+# Append summary content for the current step
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-markdown-content
+#   stdin: environment variable value
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::summary {
+    echo "$(< /dev/stdin)" >> "$GITHUB_STEP_SUMMARY"
+}
+
+# Prepend a directory to the system PATH variable to all subsequent actions in the current job
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+#   $1: path
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::path {
+    echo "$1" >> "$GITHUB_PATH"
+}
+
 # Flatten JSON to key-value lines
 #   $1: separator (default as ' 👉 ')
 #   stdin: json
