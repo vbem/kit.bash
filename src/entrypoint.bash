@@ -33,6 +33,7 @@ function kit::wf::group {
 
 # Masking a value in a log
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#masking-a-value-in-a-log
+# https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-secrets
 #   $1: value
 function kit::wf::mask {
     echo "::add-mask::$1" >&2
