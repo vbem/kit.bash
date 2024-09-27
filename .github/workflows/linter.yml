@@ -1,20 +1,12 @@
 ---
-name: Linter
+  name: Linter
 
-concurrency:
-  group: ${{ github.workflow }}@${{ github.ref }}
-  cancel-in-progress: true
+  concurrency: { group: "${{ github.workflow }}@${{ github.ref }}", cancel-in-progress: true }
+  on:
+    push: { branches: [master, main] }
+    workflow_dispatch:
 
-on:
-  push:
-    branches: [master, main]
-  workflow_dispatch:
-
-jobs:
-  calling:
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-    uses: vbem/reusable/.github/workflows/superlinter.yml@v1
-...
+  jobs:
+    calling:
+      permissions: { contents: read, packages: read, statuses: write }
+      uses: vbem/reusable/.github/workflows/superlinter.yml@v1

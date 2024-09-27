@@ -1,11 +1,9 @@
 ---
 # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
 name: Kit BASH
-author: '@vbem'
+author: "@vbem"
 description: General kit functions to improve user experience of bash `run` steps
-branding:
-  icon: terminal
-  color: green
+branding: { icon: terminal, color: green }
 
 inputs: {}
 
@@ -25,4 +23,3 @@ runs:
     - id: main
       shell: bash
       run: echo "entrypoint=${{ github.action_path }}/src/entrypoint.bash" >> "$GITHUB_OUTPUT"
-...

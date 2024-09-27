@@ -12,9 +12,9 @@ concurrency:
 on:
   push: # If you define neither 'tags' nor 'branches', the workflow will run for either branches or tags.
     paths:
-      - 'action.yml'
-      - 'src/**'
-      - '.github/workflows/test.yml'
+      - "action.yml"
+      - "src/**"
+      - ".github/workflows/test.yml"
   workflow_dispatch:
 
 jobs:
@@ -60,4 +60,3 @@ jobs:
           ${{ steps.kit.outputs.source }}
           kit::wf::group 'env B' <<< "$B"
           kit::wf::group 'toJson(steps)' <<< '${{ toJson(steps) }}'
-...

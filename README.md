@@ -6,6 +6,7 @@
 [![Marketplace](https://img.shields.io/badge/GitHub%20Actions-Marketplace-blue?logo=github)](https://github.com/marketplace/actions/kit-bash)
 
 ## About
+
 This action provides general kit functions to improve user experience of bash 'run' steps.
 
 ## Example usage

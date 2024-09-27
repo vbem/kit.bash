@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 [[ -v _KIT_BASH ]] && return # avoid duplicated source
-_KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -rg _KIT_BASH # sourced sential
+_KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"
+declare -rg _KIT_BASH # sourced sential
 
 # Log to stderr
 #   $1: level string
@@ -10,11 +11,11 @@ _KIT_BASH="$(realpath "${BASH_SOURCE[0]}")"; declare -rg _KIT_BASH # sourced sen
 function kit::log::stderr {
     local level
     case "$1" in
-        FATAL|ERR*)     level="\e[1;91m$1\e[0m" ;;
-        WARN*)          level="\e[1;95m$1\e[0m" ;;
-        INFO*|NOTICE)   level="\e[1;92m$1\e[0m" ;;
-        DEBUG)          level="\e[1;96m$1\e[0m" ;;
-        *)              level="\e[1;94m$1\e[0m" ;;
+        FATAL | ERR*) level="\e[1;91m$1\e[0m" ;;
+        WARN*) level="\e[1;95m$1\e[0m" ;;
+        INFO* | NOTICE) level="\e[1;92m$1\e[0m" ;;
+        DEBUG) level="\e[1;96m$1\e[0m" ;;
+        *) level="\e[1;94m$1\e[0m" ;;
     esac
     echo -e "\e[2;97m[\e[0m$level\e[2;97m]\e[0m \e[93m$2\e[0m" >&2
 }
@@ -26,9 +27,9 @@ function kit::log::stderr {
 #   stderr: grouped logs
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::group {
-    echo "::group::$1"      >&2
-    echo "$(< /dev/stdin)"  >&2
-    echo '::endgroup::'     >&2
+    echo "::group::$1" >&2
+    echo "$(</dev/stdin)" >&2
+    echo '::endgroup::' >&2
 }
 
 # Masking a value in a log
@@ -60,13 +61,13 @@ function kit::wf::stop {
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::output {
     local val
-    val="$(< /dev/stdin)"
+    val="$(</dev/stdin)"
     { # https://www.gnu.org/software/bash/manual/bash.html#Command-Grouping
         echo "$1<<__GITHUB_OUTPUT__"
         echo "$val"
         echo '__GITHUB_OUTPUT__'
-    } >> "$GITHUB_OUTPUT"
-    kit::wf::group "🖨️ step output '$1' has been set" <<< "${2:-$val}"
+    } >>"$GITHUB_OUTPUT"
+    kit::wf::group "🖨️ step output '$1' has been set" <<<"${2:-$val}"
 }
 
 # Set stdin as value to environment with given name
@@ -78,13 +79,21 @@ function kit::wf::output {
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::env {
     local val
-    val="$(< /dev/stdin)"
+    val="$(</dev/stdin)"
     { # https://www.gnu.org/software/bash/manual/bash.html#Command-Grouping
         echo "$1<<__GITHUB_ENV__"
         echo "$val"
         echo '__GITHUB_ENV__'
-    } >> "$GITHUB_ENV"
-    kit::wf::group "💲 env '$1' has been set in \$GITHUB_ENV" <<< "${2:-$val}"
+    } >>"$GITHUB_ENV"
+    kit::wf::group "💲 env '$1' has been set in \$GITHUB_ENV" <<<"${2:-$val}"
+}
+
+# Export all secrets as env vars for subsequent steps
+# https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#secrets-context
+#   $1: "${{ toJSON(secrets) }}"
+#   $?: 0 if successful and non-zero otherwise
+function kit::wf::exportSecrets {
+    jq -Mcre 'to_entries | .[] | "\(.key)<<__GITHUB_ENV__\n\(.value)\n__GITHUB_ENV__"' <<<"$1" >>"$GITHUB_ENV"
 }
 
 # Append summary content for the current step
@@ -92,7 +101,7 @@ function kit::wf::env {
 #   stdin: markdown-content
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::summary {
-    echo "$(< /dev/stdin)" >> "$GITHUB_STEP_SUMMARY"
+    echo "$(</dev/stdin)" >>"$GITHUB_STEP_SUMMARY"
 }
 
 # Prepend a directory to the system PATH variable to all subsequent actions in the current job
@@ -100,7 +109,7 @@ function kit::wf::summary {
 #   $1: path
 #   $?: 0 if successful and non-zero otherwise
 function kit::wf::path {
-    echo "$1" >> "$GITHUB_PATH"
+    echo "$1" >>"$GITHUB_PATH"
 }
 
 # Flatten JSON to key-value lines
@@ -110,7 +119,7 @@ function kit::wf::path {
 #   $?: 0 if successful and non-zero otherwise
 function kit::json::flatten {
     jq -Mcr --arg sep "${1:- 👉 }" \
-    'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
+        'paths(type!="object" and type!="array") as $p | {"key":$p|join("."),"value":getpath($p)} | "\(.key)\($sep)\(.value|@json)"'
 }
 
 # Run docker image history
@@ -139,7 +148,7 @@ function kit::docker::imageInspect {
 function kit::docker::imageSave {
     local compress="${2:-gzip -v}" archive="${3:-$RUNNER_TEMP/image.tar.gz}"
     {
-        time docker image save "$1" | $compress > "$archive"
+        time docker image save "$1" | $compress >"$archive"
         ls -ald --full-time "$archive"
     } | kit::wf::group "🐳 docker image save '$1' | $compress > '$archive'"
     echo -n "$archive"
@@ -154,9 +163,9 @@ function kit::docker::imageSave {
 function kit::k8s::dockerconfigjson {
     kit::log::stderr DEBUG "🔑 Generating dockerconfigjson for $2@$1"
     kubectl create secret docker-registry 'tmp' \
-      --dry-run=client -o yaml \
-      --docker-server="$1" \
-      --docker-username="$2" \
-      --docker-password="$3" \
-    | yq -Me '.data[.dockerconfigjson]'
+        --dry-run=client -o yaml \
+        --docker-server="$1" \
+        --docker-username="$2" \
+        --docker-password="$3" \
+        | yq -Me '.data[.dockerconfigjson]'
 }
