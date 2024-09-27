@@ -5,16 +5,11 @@ env:
   TZ: Asia/Shanghai
 
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-only-cancel-in-progress-jobs-or-runs-for-the-current-workflow
-concurrency:
-  group: ${{ github.workflow }}@${{ github.ref }}
-  cancel-in-progress: true
+concurrency: { group: "${{ github.workflow }}@${{ github.ref }}", cancel-in-progress: true }
 
 on:
-  push: # If you define neither 'tags' nor 'branches', the workflow will run for either branches or tags.
-    paths:
-      - "action.yml"
-      - "src/**"
-      - ".github/workflows/test.yml"
+  # If you define neither 'tags' nor 'branches', the workflow will run for either branches or tags.
+  push: { paths: ["action.yml", "src/**", ".github/workflows/test.yml"] }
   workflow_dispatch:
 
 jobs:
@@ -23,7 +18,8 @@ jobs:
 
     steps:
       # https://github.com/marketplace/actions/checkout
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
 
       - name: Load `kit.bash` action
         id: kit
@@ -31,8 +27,7 @@ jobs:
 
       - name: Read and execute `kit.bash` entrypoint in current shell
         id: case
-        env:
-          STEP_ENV: some-secret-value
+        env: { STEP_ENV: some-secret-value }
         run: |
           ${{ steps.kit.outputs.source }}
           kit::log::stderr DEBUG 'This is a DEBUG message'

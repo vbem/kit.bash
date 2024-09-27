@@ -31,5 +31,5 @@ This action provides general kit functions to improve user experience of bash 'r
 
 ID | Type | Description
 --- | --- | ---
-`entrypoint` | String | Path to 'kit.bash' entrypoint |
-`source` | String | Command to source 'kit.bash' entrypoint in current shell |
+`entrypoint` | String | Path to 'kit.bash' entrypoint
+`source` | String | Command to source 'kit.bash' entrypoint in current shell
